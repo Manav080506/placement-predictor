@@ -1,64 +1,77 @@
 """
 Predict whether a student gets placed or not.
-Compares Logistic Regression vs Random Forest, and reports
-which features matter most - the actual insight recruiters/
-interviewers will ask about, not just the accuracy number.
+
+Uses 5-fold stratified cross-validation as the primary accuracy metric,
+not a single train/test split. With only 215 rows, a single 80/20 split
+tests on just ~43 students - a couple of lucky/unlucky guesses can swing
+"accuracy" by 5-10 points and mean nothing. Cross-validation tests every
+row exactly once as unseen data, which is the honest number to report.
 """
 import pandas as pd
 import joblib
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix
 
 from data_prep import prepare
 
 TARGET = "status"
-DROP_FOR_CLASSIFICATION = ["salary"]  # salary leaks the answer - only known post-placement
+DROP_FOR_CLASSIFICATION = ["salary"]
+
+BEST_RF_PARAMS = dict(
+    n_estimators=200, max_depth=None, min_samples_split=2,
+    min_samples_leaf=1, max_features="log2", random_state=42,
+)
+BEST_GB_PARAMS = dict(
+    n_estimators=100, max_depth=4, learning_rate=0.1,
+    subsample=0.7, random_state=42,
+)
 
 
 def main():
     raw, df, encoders = prepare()
-
     X = df.drop(columns=[TARGET] + DROP_FOR_CLASSIFICATION)
-    y = df[TARGET]  # 1 = Placed, 0 = Not Placed (see encoders["status"].classes_)
+    y = df[TARGET]
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
+    candidates = {
+        "Logistic Regression": LogisticRegression(max_iter=1000),
+        "Random Forest (tuned)": RandomForestClassifier(**BEST_RF_PARAMS),
+        "Gradient Boosting (tuned)": GradientBoostingClassifier(**BEST_GB_PARAMS),
+    }
+
+    print("=== 5-fold cross-validated accuracy (the honest number) ===")
+    cv_results = {}
+    for name, model in candidates.items():
+        scores = cross_val_score(model, X, y, cv=cv, scoring="accuracy")
+        cv_results[name] = scores.mean()
+        print(f"{name}: {scores.mean():.3f} (+/- {scores.std():.3f})")
+
+    best_name = max(cv_results, key=cv_results.get)
+    print(f"\nBest by cross-validation: {best_name} ({cv_results[best_name]:.3f})")
+
+    best_model = candidates[best_name]
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
+    best_model.fit(X_train, y_train)
+    preds = best_model.predict(X_test)
 
-    models = {
-        "Logistic Regression": LogisticRegression(max_iter=1000),
-        "Random Forest": RandomForestClassifier(n_estimators=200, random_state=42),
-    }
+    print("\n=== Held-out split (illustrative only, not the reported metric) ===")
+    print(classification_report(y_test, preds, target_names=encoders["status"].classes_))
+    print("Confusion matrix (rows=actual, cols=predicted):")
+    print(confusion_matrix(y_test, preds))
 
-    results = {}
-    for name, model in models.items():
-        model.fit(X_train, y_train)
-        preds = model.predict(X_test)
-        acc = accuracy_score(y_test, preds)
-        results[name] = (model, acc, preds)
-        print(f"\n=== {name} ===")
-        print(f"Accuracy: {acc:.3f}")
-        print(classification_report(y_test, preds, target_names=encoders["status"].classes_))
-
-    # Keep the better performer
-    best_name = max(results, key=lambda k: results[k][1])
-    best_model, best_acc, best_preds = results[best_name]
-    print(f"\nBest model: {best_name} ({best_acc:.3f} accuracy)")
-
-    print("\nConfusion matrix (rows=actual, cols=predicted):")
-    print(confusion_matrix(y_test, best_preds))
-
-    # Feature importance (only meaningful for the Random Forest)
-    if best_name == "Random Forest":
+    if hasattr(best_model, "feature_importances_"):
         importances = pd.Series(best_model.feature_importances_, index=X.columns)
         print("\nTop factors influencing placement:")
         print(importances.sort_values(ascending=False).head(6))
 
+    best_model.fit(X, y)
     joblib.dump(best_model, "models/placement_classifier.pkl")
     joblib.dump(encoders, "models/encoders.pkl")
-    print("\nSaved best model to models/placement_classifier.pkl")
+    print(f"\nSaved final model ({best_name}, refit on all data) to models/placement_classifier.pkl")
 
 
 if __name__ == "__main__":
