@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Placement Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0B1220; --panel:#111B2E; --panel-2:#0E1626; --line:#22314D;
+    --text:#E8EDF4; --muted:#8492A6; --amber:#F2A93B; --teal:#35C7C1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,'IBM Plex Sans',sans-serif;padding:32px;}
+  .wrap{max-width:1180px;margin:0 auto;}
+  h1{font-size:26px;font-weight:600;margin-bottom:6px;}
+  .subtitle{color:var(--muted);font-size:14px;margin-bottom:28px;}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;}
+  .kpi-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;}
+  .kpi-value{font-size:30px;font-weight:600;}
+  .kpi-value.amber{color:var(--amber);}
+  .kpi-value.teal{color:var(--teal);}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;margin-bottom:18px;}
+  .card h2{font-size:15px;font-weight:600;margin-bottom:4px;}
+  .card .insight{font-size:12px;color:var(--muted);margin-bottom:14px;}
+  canvas{max-height:260px;}
+  .full{grid-column:1 / -1;}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:20px;}
+  @media (max-width:900px){.kpis{grid-template-columns:1fr 1fr;}.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Campus Placement &amp; Salary Dashboard</h1>
+  <p class="subtitle">215 students · JECRC-style MBA cohort · data cleaned via <code>src/data_prep.py</code></p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-label">Total Students</div><div class="kpi-value">215</div></div>
+    <div class="kpi"><div class="kpi-label">Placement Rate</div><div class="kpi-value amber">68.8%</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Salary (Placed)</div><div class="kpi-value teal">₹2,88,655</div></div>
+    <div class="kpi"><div class="kpi-label">Median Salary</div><div class="kpi-value">₹2,65,000</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Placement Rate by Specialization</h2>
+      <p class="insight">Marketing &amp; Finance students place 23 points higher than Marketing &amp; HR.</p>
+      <canvas id="specChart"></canvas>
+    </div>
+    <div class="card">
+      <h2>Placement Rate: Work Experience</h2>
+      <p class="insight">Prior work experience raises placement odds from 60% to 87%.</p>
+      <canvas id="workexChart"></canvas>
+    </div>
+    <div class="card">
+      <h2>Academic Scores: Placed vs Not Placed</h2>
+      <p class="insight">10th grade % shows the widest gap — matches the model's top predictor.</p>
+      <canvas id="scoresChart"></canvas>
+    </div>
+    <div class="card">
+      <h2>Placement Rate by Degree Type</h2>
+      <p class="insight">"Others" degree types placed at a notably lower rate (45%).</p>
+      <canvas id="degreeChart"></canvas>
+    </div>
+    <div class="card full">
+      <h2>Salary Distribution (Placed Students)</h2>
+      <p class="insight">Most offers cluster in ₹2-3 lakh; the long tail above ₹4L pulls the average up, which is exactly why the salary model in this project reported a low R² — see project README.</p>
+      <canvas id="salaryChart"></canvas>
+    </div>
+  </div>
+
+  <footer>Campus Placement &amp; Salary Predictor — github.com/Manav080506/placement-predictor</footer>
+</div>
+
+<script>
+const COLORS = { amber: '#F2A93B', teal: '#35C7C1', muted: '#8492A6', line: '#22314D' };
+Chart.defaults.color = '#8492A6';
+Chart.defaults.borderColor = '#22314D';
+Chart.defaults.font.family = "-apple-system, 'IBM Plex Sans', sans-serif";
+
+function barChart(id, labels, data, color, suffix){
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: color, borderRadius: 4, maxBarThickness: 60 }] },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => ctx.parsed.y + (suffix||'') } } },
+      scales: { y: { beginAtZero: true, grid: { color: COLORS.line } }, x: { grid: { display: false } } }
+    }
+  });
+}
+
+barChart('specChart', ['Mkt & Fin', 'Mkt & HR'], [79.2, 55.8], COLORS.teal, '%');
+barChart('workexChart', ['No Experience', 'Has Experience'], [59.6, 86.5], COLORS.amber, '%');
+barChart('degreeChart', ['Comm & Mgmt', 'Sci & Tech', 'Others'], [70.3, 69.5, 45.5], COLORS.teal, '%');
+
+new Chart(document.getElementById('scoresChart'), {
+  type: 'bar',
+  data: {
+    labels: ['10th %', '12th %', 'Degree %', 'MBA %'],
+    datasets: [
+      { label: 'Not Placed', data: [57.5, 58.4, 61.1, 61.6], backgroundColor: COLORS.muted, borderRadius: 4 },
+      { label: 'Placed', data: [71.7, 69.9, 68.7, 62.6], backgroundColor: COLORS.amber, borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } },
+    scales: { y: { beginAtZero: true, grid: { color: COLORS.line } }, x: { grid: { display: false } } }
+  }
+});
+
+new Chart(document.getElementById('salaryChart'), {
+  type: 'bar',
+  data: {
+    labels: ['<2L', '2-2.5L', '2.5-3L', '3-3.5L', '3.5-4L', '4L+'],
+    datasets: [{ data: [6, 56, 58, 6, 12, 10], backgroundColor: COLORS.teal, borderRadius: 4, maxBarThickness: 70 }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, grid: { color: COLORS.line } }, x: { grid: { display: false } } }
+  }
+});
+</script>
+</body>
+</html>
