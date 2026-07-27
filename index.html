@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Placement &amp; Salary Advisory Dossier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F6F3EC;
+      --panel: #FFFFFF;
+      --panel-inset: #FAF8F3;
+      --line: #D5CEBE;
+      --line-dark: #8C8270;
+      --text: #1C2024;
+      --text-muted: #5C6470;
+      --navy: #1B2A4A;
+      --gold: #A37A2C;
+      --amber: #B86B14;
+      --teal: #1D7A75;
+      --red: #9E2A2B;
+      --green: #1E5631;
+      --placed-bg: #EAF3ED;
+      --placed-border: #2E7D32;
+      --unplaced-bg: #FDF4E7;
+      --unplaced-border: #C67D0A;
+      --gold-glow: rgba(163, 122, 44, 0.18);
+      --navy-glow: rgba(27, 42, 74, 0.15);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(var(--line) 0.7px, transparent 0.7px),
+        radial-gradient(var(--line) 0.7px, var(--bg) 0.7px);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.55;
+      padding: 36px 20px;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    /* Staggered & Scroll Reveal */
+    .reveal-item {
+      opacity: 0;
+      transform: translateY(16px);
+      will-change: opacity, transform;
+      transition: opacity 0.55s var(--ease-out-expo), transform 0.55s var(--ease-out-expo);
+    }
+
+    .reveal-item.is-revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Header Framing - Official Academic Document Style */
+    header {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-top: 4px double var(--navy);
+      border-bottom: 2px solid var(--line-dark);
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      background: var(--panel);
+      padding-left: 24px;
+      padding-right: 24px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .header-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-eyebrow::before {
+      content: '🏛';
+      font-size: 12px;
+    }
+
+    .header-title h1 {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      margin-top: 4px;
+      font-family: var(--font-sans);
+    }
+
+    .doc-ref-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .doc-ref-number {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      background: var(--panel-inset);
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    .api-settings-container {
+      position: relative;
+    }
+
+    .api-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--panel-inset);
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .btn-gear {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 2px 4px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s var(--ease-out-expo);
+    }
+
+    .btn-gear:hover {
+      color: var(--navy);
+    }
+
+    .api-settings-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      background: var(--panel);
+      border: 2px solid var(--navy);
+      border-radius: 4px;
+      padding: 14px;
+      width: 300px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      z-index: 100;
+    }
+
+    .api-settings-dropdown.open {
+      display: block;
+    }
+
+    .api-settings-dropdown label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      display: block;
+      font-weight: 600;
+    }
+
+    .api-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .api-input-group input {
+      font-size: 12px;
+      padding: 6px 10px;
+      background: var(--panel-inset);
+      border: 1px solid var(--line-dark);
+      color: var(--text);
+    }
+
+    .btn-save-url {
+      background: var(--navy);
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 12px;
+      border: none;
+      border-radius: 3px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background 0.2s var(--ease-out-expo);
+      white-space: nowrap;
+    }
+
+    .btn-save-url:hover {
+      background: #2a3e68;
+    }
+
+    .api-settings-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+      display: block;
+      line-height: 1.3;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    /* Layout Grid */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      outline: 1px solid #EAE3D5;
+      outline-offset: -5px;
+      border-radius: 4px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+      position: relative;
+    }
+
+    .card-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--navy);
+      padding-bottom: 6px;
+    }
+
+    .card-subtitle {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    /* Hero Section - Official Directive Note */
+    .hero-card {
+      background: var(--panel);
+      border: 1px solid var(--line-dark);
+      outline: 1px solid var(--line);
+      outline-offset: -5px;
+      border-radius: 4px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+
+    .hero-content {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .hero-description {
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .hero-description strong {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .btn-hero {
+      background: var(--navy);
+      border: 1px solid var(--navy);
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 3px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s var(--ease-out-expo);
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .btn-hero:hover {
+      background: #2a3e68;
+      box-shadow: 0 4px 14px var(--navy-glow);
+      transform: translateY(-2px);
+    }
+
+    /* Presets bar */
+    .presets-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+
+    .preset-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+    }
+
+    .btn-preset {
+      background: var(--panel-inset);
+      border: 1px solid var(--line-dark);
+      color: var(--navy);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out-expo);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-preset:hover {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(27, 42, 74, 0.15);
+    }
+
+    /* Form Styles */
+    .form-section-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      margin: 18px 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 580px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      font-family: var(--font-mono);
+      letter-spacing: 0.02em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .field-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    input, select {
+      background: var(--panel-inset);
+      border: 1px solid var(--line-dark);
+      border-radius: 3px;
+      padding: 9px 11px;
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.25s var(--ease-out-expo), box-shadow 0.25s var(--ease-out-expo);
+      width: 100%;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--navy);
+      outline: 2px solid var(--navy);
+      outline-offset: 1px;
+      box-shadow: 0 0 0 4px var(--navy-glow);
+    }
+
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--navy) !important;
+      outline-offset: 2px !important;
+      box-shadow: 0 0 0 4px var(--navy-glow) !important;
+    }
+
+    input.error-field, select.error-field {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(158, 42, 43, 0.15);
+    }
+
+    .error-msg {
+      font-size: 11px;
+      color: var(--red);
+      margin-top: 2px;
+      display: none;
+      font-family: var(--font-mono);
+    }
+
+    .error-msg.visible {
+      display: block;
+    }
+
+    /* Actions */
+    .form-actions {
+      margin-top: 24px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--navy);
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 14px 20px;
+      border: 1px solid var(--navy);
+      border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: all 0.25s var(--ease-out-expo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-submit:hover {
+      background: #2a3e68;
+      box-shadow: 0 4px 18px var(--navy-glow);
+      transform: translateY(-2px);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #FFFFFF;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Result Panel Styles */
+    .result-card {
+      position: sticky;
+      top: 24px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 38px;
+      margin-bottom: 12px;
+      opacity: 0.6;
+    }
+
+    .empty-state p {
+      font-size: 13.5px;
+      max-width: 270px;
+      margin: 0 auto;
+    }
+
+    /* Alert Banner */
+    .alert-box {
+      background: rgba(158, 42, 43, 0.08);
+      border: 1px solid var(--red);
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert-box.visible {
+      display: block;
+    }
+
+    .alert-header {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .alert-body {
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    /* Skeleton Loading State */
+    .skeleton-container {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .skeleton-container.visible {
+      display: flex;
+    }
+
+    .skeleton-pulse {
+      background: linear-gradient(90deg, #F0EDE4 25%, #E4DEC5 50%, #F0EDE4 75%);
+      background-size: 200% 100%;
+      animation: skeleton-pulse 1.4s infinite ease-in-out;
+      border-radius: 4px;
+    }
+
+    @keyframes skeleton-pulse {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-badge {
+      width: 170px;
+      height: 38px;
+      border-radius: 3px;
+      margin: 0 auto 8px auto;
+    }
+
+    .skeleton-gauge {
+      background: var(--panel-inset);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .skeleton-text-sm {
+      width: 140px;
+      height: 12px;
+    }
+
+    .skeleton-text-lg {
+      width: 90px;
+      height: 36px;
+    }
+
+    .skeleton-bar {
+      width: 100%;
+      height: 10px;
+      border-radius: 4px;
+    }
+
+    .skeleton-salary {
+      height: 58px;
+      border-radius: 4px;
+    }
+
+    .skeleton-banner {
+      height: 60px;
+      border-radius: 4px;
+    }
+
+    /* Output Results Container */
+    .results-container {
+      display: none;
+    }
+
+    .results-container.visible {
+      display: block;
+    }
+
+    .results-container.animate-in {
+      animation: resultFadeUp 0.4s var(--ease-out-expo) forwards;
+    }
+
+    @keyframes resultFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Result Payoff Overshoot */
+    .payoff-overshoot {
+      animation: metricOvershoot 0.5s var(--ease-overshoot) forwards;
+    }
+
+    @keyframes metricOvershoot {
+      0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(6px);
+      }
+      65% {
+        opacity: 1;
+        transform: scale(1.035) translateY(-2px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    /* Status Badge - Official Report Stamp Style */
+    .status-badge-container {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .status-badge.placed {
+      background: var(--placed-bg);
+      border: 2px solid var(--placed-border);
+      color: var(--green);
+    }
+
+    .status-badge.unplaced {
+      background: var(--unplaced-bg);
+      border: 2px solid var(--unplaced-border);
+      color: var(--amber);
+    }
+
+    /* Gauge / Progress section */
+    .gauge-section {
+      background: var(--panel-inset);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .gauge-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .gauge-value {
+      font-family: var(--font-mono);
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .gauge-value.placed-color { color: var(--green); }
+    .gauge-value.unplaced-color { color: var(--amber); }
+
+    .progress-track {
+      background: #EAE5D9;
+      border: 1px solid var(--line);
+      height: 10px;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 3px;
+      transition: width 0.8s var(--ease-out-expo);
+    }
+
+    .progress-fill.placed-color {
+      background: linear-gradient(90deg, #2E7D32, #1E5631);
+    }
+
+    .progress-fill.unplaced-color {
+      background: linear-gradient(90deg, #C67D0A, #B86B14);
+    }
+
+    /* Salary Display */
+    .salary-box {
+      background: var(--panel-inset);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .salary-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    .salary-amount {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .salary-amount.null-salary {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Insight Banner */
+    .insight-banner {
+      background: var(--panel-inset);
+      border-left: 3px solid var(--gold);
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      border-radius: 0 4px 4px 0;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+
+    .insight-banner-title {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .insight-banner-text {
+      font-size: 12.5px;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    /* Document Disclaimer Footer */
+    .report-disclaimer {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 18px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line-dark);
+      line-height: 1.4;
+      text-align: center;
+      font-style: italic;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 11.5px;
+      margin-top: 36px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line-dark);
+      font-family: var(--font-mono);
+    }
+
+    /* Prefers Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto !important;
+      }
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal-item {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      .progress-fill {
+        transition: none !important;
+      }
+      .skeleton-pulse {
+        animation: none !important;
+        opacity: 0.5 !important;
+      }
+      .results-container.animate-in, .payoff-overshoot {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .btn-hero:hover, .btn-preset:hover, .btn-submit:hover {
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- OFFICIAL DOCUMENT HEADER -->
+  <header class="reveal-item">
+    <div class="header-title">
+      <div class="header-eyebrow">CAMPUS PLACEMENT ANALYSIS &amp; FORECAST BOARD</div>
+      <h1>Campus Placement &amp; Salary Advisory Dossier</h1>
+      <p class="subtitle">Statistical evaluation powered by Scikit-Learn Classification &amp; Regression Models</p>
+    </div>
+    <div class="doc-ref-box">
+      <div class="doc-ref-number" id="docRefNum">Ref No: CP-2026-EVAL</div>
+      <div class="api-settings-container">
+        <div class="api-badge" id="apiBadge">
+          <div class="dot" id="apiDot"></div>
+          <span id="apiBadgeText">API: http://localhost:5000</span>
+          <button type="button" class="btn-gear" id="btnSettings" title="Configure API Base URL">⚙️</button>
+        </div>
+        <div class="api-settings-dropdown" id="settingsDropdown">
+          <label for="apiUrlInput">API BASE URL</label>
+          <div class="api-input-group">
+            <input type="text" id="apiUrlInput" value="http://localhost:5000" placeholder="e.g. http://localhost:8891">
+            <button type="button" class="btn-save-url" id="btnSaveUrl">Save</button>
+          </div>
+          <span class="api-settings-hint">Saved in session memory (default: http://localhost:5000)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO / DIRECTIVE SECTION -->
+  <section class="hero-card reveal-item">
+    <div class="hero-content">
+      <h2 class="hero-title">SECTION I: COHORT PERFORMANCE DIRECTIVE</h2>
+      <p class="hero-description">
+        This advisory dossier evaluates candidate profile data against historical cohort outcomes using a cross-validated dual machine learning pipeline with an honest <strong>87.9% cross-validated accuracy</strong>.
+      </p>
+    </div>
+    <div class="hero-action">
+      <a href="#predictionForm" class="btn-hero" id="btnTryIt">PROCEED TO FORM 01 &darr;</a>
+    </div>
+  </section>
+
+  <main class="app-layout">
+    <!-- LEFT COLUMN: Input Form -->
+    <section class="card form-card reveal-item">
+      <div class="card-title">
+        <span>SECTION II: CANDIDATE ACADEMIC &amp; PROFESSIONAL DOSSIER</span>
+      </div>
+      <p class="card-subtitle">Complete all twelve profile parameters per official academic records</p>
+
+      <!-- Presets for fast testing -->
+      <div class="presets-bar">
+        <span class="preset-label">SAMPLE DOSSIERS:</span>
+        <button type="button" class="btn-preset" onclick="loadPreset('high')">DOSSIER A (HIGH ODDS)</button>
+        <button type="button" class="btn-preset" onclick="loadPreset('moderate')">DOSSIER B (AVERAGE)</button>
+        <button type="button" class="btn-preset" onclick="loadPreset('low')">DOSSIER C (LOW ODDS)</button>
+      </div>
+
+      <form id="predictionForm" novalidate>
+        <!-- Section 1: Academics -->
+        <div class="form-section-title">PART A: ACADEMIC CREDENTIALS</div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="ssc_p">01. SECONDARY (10TH) PERCENTAGE <span class="field-hint">0-100%</span></label>
+            <input type="number" id="ssc_p" name="ssc_p" min="0" max="100" step="0.1" placeholder="e.g. 67.0" required>
+            <div class="error-msg" id="err-ssc_p">Must be a number between 0 and 100</div>
+          </div>
+
+          <div class="field">
+            <label for="ssc_b">02. SECONDARY BOARD (SSC)</label>
+            <select id="ssc_b" name="ssc_b" required>
+              <option value="Central">Central Board</option>
+              <option value="Others" selected>Others</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="hsc_p">03. HIGHER SECONDARY (12TH) PERCENTAGE <span class="field-hint">0-100%</span></label>
+            <input type="number" id="hsc_p" name="hsc_p" min="0" max="100" step="0.1" placeholder="e.g. 91.0" required>
+            <div class="error-msg" id="err-hsc_p">Must be a number between 0 and 100</div>
+          </div>
+
+          <div class="field">
+            <label for="hsc_b">04. HIGHER SECONDARY BOARD (HSC)</label>
+            <select id="hsc_b" name="hsc_b" required>
+              <option value="Central">Central Board</option>
+              <option value="Others" selected>Others</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="hsc_s">05. HIGHER SECONDARY STREAM</label>
+            <select id="hsc_s" name="hsc_s" required>
+              <option value="Commerce" selected>Commerce</option>
+              <option value="Science">Science</option>
+              <option value="Arts">Arts</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="degree_p">06. UNDERGRADUATE DEGREE PERCENTAGE <span class="field-hint">0-100%</span></label>
+            <input type="number" id="degree_p" name="degree_p" min="0" max="100" step="0.1" placeholder="e.g. 58.0" required>
+            <div class="error-msg" id="err-degree_p">Must be a number between 0 and 100</div>
+          </div>
+        </div>
+
+        <!-- Section 2: Specialization & Professional -->
+        <div class="form-section-title">PART B: SPECIALIZATION &amp; EXPERIENCE</div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="degree_t">07. UNDERGRADUATE DEGREE FIELD</label>
+            <select id="degree_t" name="degree_t" required>
+              <option value="Comm&Mgmt">Commerce &amp; Management</option>
+              <option value="Sci&Tech" selected>Science &amp; Technology</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="workex">08. PRIOR WORK EXPERIENCE</label>
+            <select id="workex" name="workex" required>
+              <option value="Yes">Yes (Has Prior Experience)</option>
+              <option value="No" selected>No (Fresher Candidate)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="etest_p">09. EMPLOYABILITY TEST SCORE (E-TEST %) <span class="field-hint">0-100%</span></label>
+            <input type="number" id="etest_p" name="etest_p" min="0" max="100" step="0.1" placeholder="e.g. 55.0" required>
+            <div class="error-msg" id="err-etest_p">Must be a number between 0 and 100</div>
+          </div>
+
+          <div class="field">
+            <label for="specialisation">10. POSTGRADUATE MBA SPECIALIZATION</label>
+            <select id="specialisation" name="specialisation" required>
+              <option value="Mkt&Fin">Marketing &amp; Finance</option>
+              <option value="Mkt&HR" selected>Marketing &amp; HR</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="mba_p">11. MBA DEGREE PERCENTAGE <span class="field-hint">0-100%</span></label>
+            <input type="number" id="mba_p" name="mba_p" min="0" max="100" step="0.1" placeholder="e.g. 58.8" required>
+            <div class="error-msg" id="err-mba_p">Must be a number between 0 and 100</div>
+          </div>
+
+          <div class="field">
+            <label for="gender">12. CANDIDATE GENDER</label>
+            <select id="gender" name="gender" required>
+              <option value="M" selected>Male</option>
+              <option value="F">Female</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit" id="btnSubmit">
+            <div class="spinner" id="btnSpinner"></div>
+            <span id="btnText">EVALUATE DOSSIER &amp; GENERATE REPORT</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- RIGHT COLUMN: Results Dashboard -->
+    <section class="card result-card reveal-item">
+      <div class="card-title">
+        <span>SECTION III: STATISTICAL FORECAST STATEMENT</span>
+      </div>
+      <p class="card-subtitle">Real-time cohort model probability &amp; package estimate</p>
+
+      <!-- Alert Box for API Errors -->
+      <div class="alert-box" id="alertBox">
+        <div class="alert-header" id="alertTitle">API Connection Error</div>
+        <div class="alert-body" id="alertBody">Something went wrong while connecting to the model server.</div>
+      </div>
+
+      <!-- Skeleton Loading State -->
+      <div class="skeleton-container" id="skeletonLoader">
+        <div class="skeleton-badge skeleton-pulse"></div>
+        <div class="skeleton-gauge skeleton-pulse">
+          <div class="skeleton-text-sm skeleton-pulse"></div>
+          <div class="skeleton-text-lg skeleton-pulse"></div>
+          <div class="skeleton-bar skeleton-pulse"></div>
+        </div>
+        <div class="skeleton-salary skeleton-pulse"></div>
+        <div class="skeleton-banner skeleton-pulse"></div>
+      </div>
+
+      <!-- Initial Empty State -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-state-icon">📋</div>
+        <p>Complete candidate profile parameters in Section II and click <strong>Evaluate Dossier</strong> to view report.</p>
+      </div>
+
+      <!-- Results Display Container -->
+      <div class="results-container" id="resultsContainer">
+        <!-- Result Badge -->
+        <div class="status-badge-container">
+          <div class="status-badge" id="statusBadge">
+            <span id="badgeIcon">●</span>
+            <span id="badgeText">STATUS: PROJECTED</span>
+          </div>
+        </div>
+
+        <!-- Placement Probability Gauge -->
+        <div class="gauge-section">
+          <div class="gauge-label">Placement Likelihood (Model Estimate)</div>
+          <div class="gauge-value" id="gaugeValue">0.0%</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <!-- Salary Estimate Box -->
+        <div class="salary-box">
+          <div class="salary-label">Estimated Package</div>
+          <div class="salary-amount" id="salaryAmount">₹0</div>
+        </div>
+
+        <!-- Key Model Insight Line -->
+        <div class="insight-banner">
+          <div class="insight-banner-title">MODEL STATISTICAL INSIGHT</div>
+          <p class="insight-banner-text" id="insightText">
+            Work experience alone can shift placement odds by ~27 points for similar profiles.
+          </p>
+        </div>
+
+        <!-- Explicit Honest Disclaimer -->
+        <div class="report-disclaimer">
+          Based on a 215-student cohort model, 87.9% cross-validated accuracy — a statistical estimate, not a guarantee.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    CAMPUS PLACEMENT ADVISORY DOSSIER &bull; ML MODEL ENGINE v1.0
+  </footer>
+</div>
+
+<script>
+  const API_URL = "http://localhost:5000/predict";
+
+  const SCORE_FIELDS = ["ssc_p", "hsc_p", "degree_p", "etest_p", "mba_p"];
+
+  const PRESETS = {
+    high: {
+      gender: "M",
+      ssc_p: 78.0,
+      ssc_b: "Central",
+      hsc_p: 82.0,
+      hsc_b: "Central",
+      hsc_s: "Commerce",
+      degree_p: 74.0,
+      degree_t: "Comm&Mgmt",
+      workex: "Yes",
+      etest_p: 85.0,
+      specialisation: "Mkt&Fin",
+      mba_p: 72.0
+    },
+    moderate: {
+      gender: "M",
+      ssc_p: 67.0,
+      ssc_b: "Others",
+      hsc_p: 91.0,
+      hsc_b: "Others",
+      hsc_s: "Commerce",
+      degree_p: 58.0,
+      degree_t: "Sci&Tech",
+      workex: "No",
+      etest_p: 55.0,
+      specialisation: "Mkt&HR",
+      mba_p: 58.8
+    },
+    low: {
+      gender: "F",
+      ssc_p: 48.0,
+      ssc_b: "Others",
+      hsc_p: 52.0,
+      hsc_b: "Others",
+      hsc_s: "Arts",
+      degree_p: 54.0,
+      degree_t: "Others",
+      workex: "No",
+      etest_p: 50.0,
+      specialisation: "Mkt&HR",
+      mba_p: 52.0
+    }
+  };
+
+  let customApiUrl = "http://localhost:5000";
+
+  const btnSettings = document.getElementById('btnSettings');
+  const settingsDropdown = document.getElementById('settingsDropdown');
+  const apiUrlInput = document.getElementById('apiUrlInput');
+  const btnSaveUrl = document.getElementById('btnSaveUrl');
+  const apiBadgeText = document.getElementById('apiBadgeText');
+
+  if (btnSettings && settingsDropdown) {
+    btnSettings.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsDropdown.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!settingsDropdown.contains(e.target) && e.target !== btnSettings) {
+        settingsDropdown.classList.remove('open');
+      }
+    });
+  }
+
+  function saveCustomApiUrl() {
+    const val = apiUrlInput.value.trim();
+    if (val) {
+      customApiUrl = val;
+      if (apiBadgeText) {
+        apiBadgeText.innerText = `API: ${customApiUrl}`;
+      }
+    }
+    settingsDropdown.classList.remove('open');
+  }
+
+  if (btnSaveUrl) {
+    btnSaveUrl.addEventListener('click', saveCustomApiUrl);
+  }
+  if (apiUrlInput) {
+    apiUrlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        saveCustomApiUrl();
+      }
+    });
+  }
+
+  function getEndpointsToTry() {
+    const candidateBases = [];
+
+    // 1. User-set custom URL (if provided)
+    if (customApiUrl && customApiUrl.trim() !== '') {
+      let clean = customApiUrl.trim().replace(/\/+$/, '');
+      if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+        clean = 'http://' + clean;
+      }
+      candidateBases.push(clean);
+    }
+
+    // 2. localhost:5000
+    candidateBases.push("http://localhost:5000");
+
+    // 3. localhost:5001
+    candidateBases.push("http://localhost:5001");
+
+    // 4. localhost:8891
+    candidateBases.push("http://localhost:8891");
+
+    // 5. Origin if served over HTTP
+    if (window.location.protocol.startsWith('http')) {
+      candidateBases.push(window.location.origin);
+    }
+
+    // Deduplicate preserving order
+    const uniqueBases = Array.from(new Set(candidateBases));
+    return uniqueBases.map(b => `${b}/predict`);
+  }
+
+  const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Smooth scroll for hero try it button
+  document.getElementById('btnTryIt')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('predictionForm')?.scrollIntoView({ behavior: isReducedMotion ? 'auto' : 'smooth' });
+  });
+
+  // Animate numeric probability value over time
+  function animateValue(element, start, end, duration) {
+    if (isReducedMotion || duration <= 0) {
+      element.innerText = `${end.toFixed(1)}%`;
+      return;
+    }
+
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const current = start + easeProgress * (end - start);
+      element.innerText = `${current.toFixed(1)}%`;
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  // Populate preset data into form
+  function loadPreset(key) {
+    const data = PRESETS[key];
+    if (!data) return;
+
+    Object.keys(data).forEach(field => {
+      const el = document.getElementById(field);
+      if (el) {
+        el.value = data[field];
+        clearFieldError(field);
+      }
+    });
+    hideAlert();
+  }
+
+  // Clear specific field error visual
+  function clearFieldError(fieldId) {
+    const el = document.getElementById(fieldId);
+    const errEl = document.getElementById(`err-${fieldId}`);
+    if (el) el.classList.remove('error-field');
+    if (errEl) errEl.classList.remove('visible');
+  }
+
+  // Set field error visual
+  function setFieldError(fieldId, msg) {
+    const el = document.getElementById(fieldId);
+    const errEl = document.getElementById(`err-${fieldId}`);
+    if (el) el.classList.add('error-field');
+    if (errEl) {
+      if (msg) errEl.innerText = msg;
+      errEl.classList.add('visible');
+    }
+  }
+
+  // Hide global alert banner
+  function hideAlert() {
+    const alertBox = document.getElementById('alertBox');
+    alertBox.classList.remove('visible');
+  }
+
+  // Show global alert banner
+  function showAlert(title, message) {
+    const alertBox = document.getElementById('alertBox');
+    const alertTitle = document.getElementById('alertTitle');
+    const alertBody = document.getElementById('alertBody');
+
+    alertTitle.innerText = title;
+    alertBody.innerText = message;
+    alertBox.classList.add('visible');
+  }
+
+  // Format currency helper
+  function formatINR(val) {
+    if (val === null || val === undefined) return 'N/A';
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(val) + ' / yr';
+  }
+
+  // Validate form inputs on client side
+  function validateForm() {
+    let isValid = true;
+    hideAlert();
+
+    SCORE_FIELDS.forEach(field => {
+      clearFieldError(field);
+      const el = document.getElementById(field);
+      const val = parseFloat(el.value);
+
+      if (isNaN(val) || el.value.trim() === '') {
+        setFieldError(field, 'Field is required');
+        isValid = false;
+      } else if (val < 0 || val > 100) {
+        setFieldError(field, 'Value must be between 0 and 100');
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  }
+
+  // Form submission handler
+  document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      showAlert('Validation Error', 'Please fix the highlighted numeric inputs before submitting.');
+      return;
+    }
+
+    const payload = {
+      gender: document.getElementById('gender').value,
+      ssc_p: parseFloat(document.getElementById('ssc_p').value),
+      ssc_b: document.getElementById('ssc_b').value,
+      hsc_p: parseFloat(document.getElementById('hsc_p').value),
+      hsc_b: document.getElementById('hsc_b').value,
+      hsc_s: document.getElementById('hsc_s').value,
+      degree_p: parseFloat(document.getElementById('degree_p').value),
+      degree_t: document.getElementById('degree_t').value,
+      workex: document.getElementById('workex').value,
+      etest_p: parseFloat(document.getElementById('etest_p').value),
+      specialisation: document.getElementById('specialisation').value,
+      mba_p: parseFloat(document.getElementById('mba_p').value)
+    };
+
+    // UI Loading state
+    const btnSubmit = document.getElementById('btnSubmit');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const btnText = document.getElementById('btnText');
+
+    const emptyState = document.getElementById('emptyState');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const skeletonLoader = document.getElementById('skeletonLoader');
+
+    btnSubmit.disabled = true;
+    btnSpinner.style.display = 'block';
+    btnText.innerText = 'EVALUATING DOSSIER...';
+    hideAlert();
+
+    // Show Skeleton Loader (hide empty state & previous results)
+    emptyState.style.display = 'none';
+    resultsContainer.classList.remove('visible', 'animate-in');
+    skeletonLoader.classList.add('visible');
+
+    // Ensure minimum 600ms skeleton display time to avoid instant flash
+    const minDelay = new Promise(resolve => setTimeout(resolve, isReducedMotion ? 50 : 600));
+
+    const endpoints = getEndpointsToTry();
+    let response = null;
+    let successfulEndpoint = null;
+    let fetchError = null;
+
+    const fetchTask = (async () => {
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+          if (res) {
+            response = res;
+            successfulEndpoint = endpoint;
+            break;
+          }
+        } catch (err) {
+          fetchError = err;
+        }
+      }
+    })();
+
+    // Wait for both fetch and min 600ms skeleton timer
+    await Promise.all([fetchTask, minDelay]);
+
+    skeletonLoader.classList.remove('visible');
+
+    if (!response) {
+      emptyState.style.display = 'block';
+      console.error('Fetch error:', fetchError);
+      showAlert(
+        'Connection Failed',
+        "Can't reach the API. Check the terminal running `python3 app.py` and confirm the port, then enter it above."
+      );
+      btnSubmit.disabled = false;
+      btnSpinner.style.display = 'none';
+      btnText.innerText = 'EVALUATE DOSSIER & GENERATE REPORT';
+      return;
+    }
+
+    if (successfulEndpoint && apiBadgeText) {
+      try {
+        const urlObj = new URL(successfulEndpoint);
+        apiBadgeText.innerText = `API: ${urlObj.origin}`;
+      } catch (e) {}
+    }
+
+    try {
+      const data = await response.json();
+
+      if (!response.ok) {
+        emptyState.style.display = 'block';
+        const errMsg = data.error || 'The model API rejected the input format.';
+        showAlert(`API Error (${response.status})`, errMsg);
+
+        SCORE_FIELDS.forEach(f => {
+          if (errMsg.includes(`'${f}'`)) {
+            setFieldError(f, errMsg);
+          }
+        });
+        return;
+      }
+
+      // Success - Render Results with animation
+      renderResults(data, payload);
+
+    } catch (err) {
+      emptyState.style.display = 'block';
+      console.error('Response parsing error:', err);
+      showAlert('API Response Error', 'Received an invalid response format from the server.');
+    } finally {
+      btnSubmit.disabled = false;
+      btnSpinner.style.display = 'none';
+      btnText.innerText = 'EVALUATE DOSSIER & GENERATE REPORT';
+    }
+  });
+
+  // Render prediction results to UI
+  function renderResults(data, payload) {
+    const emptyState = document.getElementById('emptyState');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const statusBadge = document.getElementById('statusBadge');
+    const badgeIcon = document.getElementById('badgeIcon');
+    const badgeText = document.getElementById('badgeText');
+    const gaugeValue = document.getElementById('gaugeValue');
+    const progressFill = document.getElementById('progressFill');
+    const salaryAmount = document.getElementById('salaryAmount');
+    const insightText = document.getElementById('insightText');
+
+    emptyState.style.display = 'none';
+
+    // Trigger fade + slide animation
+    resultsContainer.classList.remove('visible', 'animate-in');
+    void resultsContainer.offsetWidth; // force reflow
+    resultsContainer.classList.add('visible', 'animate-in');
+
+    const isPlaced = data.prediction === 'Placed';
+    const probNum = data.placement_probability * 100;
+
+    // Update Status Badge (Honest Projected status)
+    if (isPlaced) {
+      statusBadge.className = 'status-badge placed';
+      badgeIcon.innerText = '●';
+      badgeText.innerText = 'STATUS: PROJECTED (PLACED)';
+    } else {
+      statusBadge.className = 'status-badge unplaced';
+      badgeIcon.innerText = '●';
+      badgeText.innerText = 'STATUS: PROJECTED (UNPLACED)';
+    }
+
+    // Gauge Colors
+    gaugeValue.className = `gauge-value ${isPlaced ? 'placed-color' : 'unplaced-color'}`;
+    progressFill.className = `progress-fill ${isPlaced ? 'placed-color' : 'unplaced-color'}`;
+
+    // Animate Number Count Up
+    animateValue(gaugeValue, 0, probNum, isReducedMotion ? 0 : 600);
+
+    // Progress Fill Animation
+    progressFill.style.width = '0%';
+    setTimeout(() => {
+      progressFill.style.width = `${probNum.toFixed(1)}%`;
+    }, 50);
+
+    // Update Salary Amount
+    if (isPlaced && data.predicted_salary) {
+      salaryAmount.className = 'salary-amount';
+      salaryAmount.innerText = formatINR(data.predicted_salary);
+    } else {
+      salaryAmount.className = 'salary-amount null-salary';
+      salaryAmount.innerText = 'N/A (Salary model applies to placed candidates)';
+    }
+
+    // Payoff overshoot animation on key metric elements
+    [gaugeValue, salaryAmount].forEach(el => {
+      el.classList.remove('payoff-overshoot');
+      void el.offsetWidth; // force reflow
+      if (!isReducedMotion) {
+        el.classList.add('payoff-overshoot');
+      }
+    });
+
+    // Dynamic insight line based on profile details
+    if (payload.workex === 'No') {
+      insightText.innerText = 'Work experience alone can shift placement odds by ~27 points for similar profiles.';
+    } else if (payload.specialisation === 'Mkt&HR') {
+      insightText.innerText = 'Marketing & Finance students historically place 23 percentage points higher than Marketing & HR.';
+    } else if (payload.ssc_p < 60) {
+      insightText.innerText = '10th Grade score is the strongest single academic predictor of placement success in this dataset.';
+    } else {
+      insightText.innerText = 'Work experience alone can shift placement odds by ~27 points for similar profiles.';
+    }
+  }
+
+  // Pre-load moderate profile & trigger staggered reveal on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    loadPreset('moderate');
+
+    // Dynamic Reference Number based on today's date
+    const todayStr = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const docRefNumEl = document.getElementById('docRefNum');
+    if (docRefNumEl) {
+      docRefNumEl.innerText = `Ref No: CP-${todayStr}-EVAL`;
+    }
+
+    if (!isReducedMotion) {
+      const reveals = document.querySelectorAll('.reveal-item');
+      reveals.forEach((el, idx) => {
+        setTimeout(() => {
+          el.classList.add('is-revealed');
+        }, idx * 90);
+      });
+
+      // Subtle IntersectionObserver for scroll-triggered reveal
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el));
+      }
+    } else {
+      document.querySelectorAll('.reveal-item').forEach(el => el.classList.add('is-revealed'));
+    }
+  });
+</script>
+
+</body>
+</html>
