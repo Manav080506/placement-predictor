@@ -411,6 +411,66 @@
       box-shadow: 0 3px 10px rgba(27, 42, 74, 0.15);
     }
 
+    /* Multi-Step Wizard Progress */
+    .wizard-progress-container {
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wizard-step-counter {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .wizard-step-counter #wizardStepNumber {
+      color: var(--gold);
+    }
+
+    .wizard-progress-track {
+      background: var(--panel-inset);
+      border: 1px solid var(--line);
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .wizard-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--navy), var(--gold));
+      width: 20%;
+      transition: width 0.4s var(--ease-out-expo);
+      border-radius: 3px;
+    }
+
+    /* Wizard Step Container Transitions */
+    .wizard-step {
+      display: none;
+    }
+
+    .wizard-step.active {
+      display: block;
+      animation: wizardFade 0.35s var(--ease-out-expo) forwards;
+    }
+
+    @keyframes wizardFade {
+      from {
+        opacity: 0;
+        transform: translateX(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
     /* Form Styles */
     .form-section-title {
       font-family: var(--font-mono);
@@ -419,7 +479,7 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
       font-weight: 700;
-      margin: 18px 0 12px 0;
+      margin: 10px 0 14px 0;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -513,24 +573,63 @@
       display: block;
     }
 
-    /* Actions */
-    .form-actions {
+    /* Wizard Nav Actions */
+    .wizard-nav-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
       margin-top: 24px;
     }
 
+    .btn-step-nav {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 18px;
+      border-radius: 4px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: all 0.25s var(--ease-out-expo);
+      text-transform: uppercase;
+    }
+
+    .btn-step-nav.btn-prev {
+      background: var(--panel-inset);
+      border: 1px solid var(--line-dark);
+      color: var(--navy);
+    }
+
+    .btn-step-nav.btn-prev:hover:not(:disabled) {
+      background: var(--navy);
+      color: #FFFFFF;
+      border-color: var(--navy);
+    }
+
+    .btn-step-nav.btn-next {
+      background: var(--navy);
+      border: 1px solid var(--navy);
+      color: #FFFFFF;
+      flex: 1;
+    }
+
+    .btn-step-nav.btn-next:hover {
+      background: #2a3e68;
+      box-shadow: 0 4px 14px var(--navy-glow);
+    }
+
     .btn-submit {
-      width: 100%;
+      flex: 1;
       background: var(--navy);
       color: #FFFFFF;
       font-family: var(--font-mono);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      padding: 14px 20px;
+      padding: 12px 18px;
       border: 1px solid var(--navy);
       border-radius: 4px;
       cursor: pointer;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       transition: all 0.25s var(--ease-out-expo);
       display: flex;
       align-items: center;
@@ -541,17 +640,11 @@
     .btn-submit:hover {
       background: #2a3e68;
       box-shadow: 0 4px 18px var(--navy-glow);
-      transform: translateY(-2px);
-    }
-
-    .btn-submit:active {
-      transform: translateY(0);
     }
 
     .btn-submit:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-      transform: none;
       box-shadow: none;
     }
 
@@ -918,6 +1011,9 @@
         transform: none !important;
         transition: none !important;
       }
+      .wizard-step.active {
+        animation: none !important;
+      }
       .progress-fill {
         transition: none !important;
       }
@@ -930,7 +1026,7 @@
         opacity: 1 !important;
         transform: none !important;
       }
-      .btn-hero:hover, .btn-preset:hover, .btn-submit:hover {
+      .btn-hero:hover, .btn-preset:hover, .btn-submit:hover, .btn-step-nav:hover {
         transform: none !important;
       }
     }
@@ -980,12 +1076,12 @@
   </section>
 
   <main class="app-layout">
-    <!-- LEFT COLUMN: Input Form -->
+    <!-- LEFT COLUMN: Input Form Wizard -->
     <section class="card form-card reveal-item">
       <div class="card-title">
         <span>SECTION II: CANDIDATE ACADEMIC &amp; PROFESSIONAL DOSSIER</span>
       </div>
-      <p class="card-subtitle">Complete all twelve profile parameters per official academic records</p>
+      <p class="card-subtitle">Complete profile parameters across five structured dossier steps</p>
 
       <!-- Presets for fast testing -->
       <div class="presets-bar">
@@ -995,105 +1091,146 @@
         <button type="button" class="btn-preset" onclick="loadPreset('low')">DOSSIER C (LOW ODDS)</button>
       </div>
 
+      <!-- Multi-Step Wizard Header Progress Indicator -->
+      <div class="wizard-progress-container">
+        <div class="wizard-step-counter">
+          <span id="wizardStepNumber">STEP 1 OF 5</span>
+          <span class="wizard-step-title" id="wizardStepTitle">SECONDARY EDUCATION (10TH)</span>
+        </div>
+        <div class="wizard-progress-track">
+          <div class="wizard-progress-bar" id="wizardProgressBar" style="width: 20%;"></div>
+        </div>
+      </div>
+
       <form id="predictionForm" novalidate>
-        <!-- Section 1: Academics -->
-        <div class="form-section-title">PART A: ACADEMIC CREDENTIALS</div>
-        <div class="form-grid">
-          <div class="field">
-            <label for="ssc_p">01. SECONDARY (10TH) PERCENTAGE <span class="field-hint">0-100%</span></label>
-            <input type="number" id="ssc_p" name="ssc_p" min="0" max="100" step="0.1" placeholder="e.g. 67.0" required>
-            <div class="error-msg" id="err-ssc_p">Must be a number between 0 and 100</div>
-          </div>
 
-          <div class="field">
-            <label for="ssc_b">02. SECONDARY BOARD (SSC)</label>
-            <select id="ssc_b" name="ssc_b" required>
-              <option value="Central">Central Board</option>
-              <option value="Others" selected>Others</option>
-            </select>
-          </div>
+        <!-- STEP 1: Secondary Education (10th) -->
+        <div class="wizard-step active" id="wizardStep1">
+          <div class="form-section-title">STEP 1: SECONDARY EDUCATION (10TH) CREDENTIALS</div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="ssc_p">01. SECONDARY (10TH) PERCENTAGE <span class="field-hint">0-100%</span></label>
+              <input type="number" id="ssc_p" name="ssc_p" min="0" max="100" step="0.1" placeholder="e.g. 67.0" required>
+              <div class="error-msg" id="err-ssc_p">Must be a number between 0 and 100</div>
+            </div>
 
-          <div class="field">
-            <label for="hsc_p">03. HIGHER SECONDARY (12TH) PERCENTAGE <span class="field-hint">0-100%</span></label>
-            <input type="number" id="hsc_p" name="hsc_p" min="0" max="100" step="0.1" placeholder="e.g. 91.0" required>
-            <div class="error-msg" id="err-hsc_p">Must be a number between 0 and 100</div>
-          </div>
-
-          <div class="field">
-            <label for="hsc_b">04. HIGHER SECONDARY BOARD (HSC)</label>
-            <select id="hsc_b" name="hsc_b" required>
-              <option value="Central">Central Board</option>
-              <option value="Others" selected>Others</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="hsc_s">05. HIGHER SECONDARY STREAM</label>
-            <select id="hsc_s" name="hsc_s" required>
-              <option value="Commerce" selected>Commerce</option>
-              <option value="Science">Science</option>
-              <option value="Arts">Arts</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="degree_p">06. UNDERGRADUATE DEGREE PERCENTAGE <span class="field-hint">0-100%</span></label>
-            <input type="number" id="degree_p" name="degree_p" min="0" max="100" step="0.1" placeholder="e.g. 58.0" required>
-            <div class="error-msg" id="err-degree_p">Must be a number between 0 and 100</div>
+            <div class="field">
+              <label for="ssc_b">02. SECONDARY BOARD (SSC)</label>
+              <select id="ssc_b" name="ssc_b" required>
+                <option value="Central">Central Board</option>
+                <option value="Others" selected>Others</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <!-- Section 2: Specialization & Professional -->
-        <div class="form-section-title">PART B: SPECIALIZATION &amp; EXPERIENCE</div>
-        <div class="form-grid">
-          <div class="field">
-            <label for="degree_t">07. UNDERGRADUATE DEGREE FIELD</label>
-            <select id="degree_t" name="degree_t" required>
-              <option value="Comm&Mgmt">Commerce &amp; Management</option>
-              <option value="Sci&Tech" selected>Science &amp; Technology</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
+        <!-- STEP 2: Higher Secondary Education (12th) -->
+        <div class="wizard-step" id="wizardStep2">
+          <div class="form-section-title">STEP 2: HIGHER SECONDARY (12TH) CREDENTIALS</div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="hsc_p">03. HIGHER SECONDARY (12TH) PERCENTAGE <span class="field-hint">0-100%</span></label>
+              <input type="number" id="hsc_p" name="hsc_p" min="0" max="100" step="0.1" placeholder="e.g. 91.0" required>
+              <div class="error-msg" id="err-hsc_p">Must be a number between 0 and 100</div>
+            </div>
 
-          <div class="field">
-            <label for="workex">08. PRIOR WORK EXPERIENCE</label>
-            <select id="workex" name="workex" required>
-              <option value="Yes">Yes (Has Prior Experience)</option>
-              <option value="No" selected>No (Fresher Candidate)</option>
-            </select>
-          </div>
+            <div class="field">
+              <label for="hsc_b">04. HIGHER SECONDARY BOARD (HSC)</label>
+              <select id="hsc_b" name="hsc_b" required>
+                <option value="Central">Central Board</option>
+                <option value="Others" selected>Others</option>
+              </select>
+            </div>
 
-          <div class="field">
-            <label for="etest_p">09. EMPLOYABILITY TEST SCORE (E-TEST %) <span class="field-hint">0-100%</span></label>
-            <input type="number" id="etest_p" name="etest_p" min="0" max="100" step="0.1" placeholder="e.g. 55.0" required>
-            <div class="error-msg" id="err-etest_p">Must be a number between 0 and 100</div>
-          </div>
-
-          <div class="field">
-            <label for="specialisation">10. POSTGRADUATE MBA SPECIALIZATION</label>
-            <select id="specialisation" name="specialisation" required>
-              <option value="Mkt&Fin">Marketing &amp; Finance</option>
-              <option value="Mkt&HR" selected>Marketing &amp; HR</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="mba_p">11. MBA DEGREE PERCENTAGE <span class="field-hint">0-100%</span></label>
-            <input type="number" id="mba_p" name="mba_p" min="0" max="100" step="0.1" placeholder="e.g. 58.8" required>
-            <div class="error-msg" id="err-mba_p">Must be a number between 0 and 100</div>
-          </div>
-
-          <div class="field">
-            <label for="gender">12. CANDIDATE GENDER</label>
-            <select id="gender" name="gender" required>
-              <option value="M" selected>Male</option>
-              <option value="F">Female</option>
-            </select>
+            <div class="field full-width">
+              <label for="hsc_s">05. HIGHER SECONDARY STREAM</label>
+              <select id="hsc_s" name="hsc_s" required>
+                <option value="Commerce" selected>Commerce</option>
+                <option value="Science">Science</option>
+                <option value="Arts">Arts</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn-submit" id="btnSubmit">
+        <!-- STEP 3: Undergraduate Degree -->
+        <div class="wizard-step" id="wizardStep3">
+          <div class="form-section-title">STEP 3: UNDERGRADUATE DEGREE CREDENTIALS</div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="degree_p">06. UNDERGRADUATE DEGREE PERCENTAGE <span class="field-hint">0-100%</span></label>
+              <input type="number" id="degree_p" name="degree_p" min="0" max="100" step="0.1" placeholder="e.g. 58.0" required>
+              <div class="error-msg" id="err-degree_p">Must be a number between 0 and 100</div>
+            </div>
+
+            <div class="field">
+              <label for="degree_t">07. UNDERGRADUATE DEGREE FIELD</label>
+              <select id="degree_t" name="degree_t" required>
+                <option value="Comm&Mgmt">Commerce &amp; Management</option>
+                <option value="Sci&Tech" selected>Science &amp; Technology</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Specialization & Experience -->
+        <div class="wizard-step" id="wizardStep4">
+          <div class="form-section-title">STEP 4: SPECIALIZATION &amp; EXPERIENCE</div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="workex">08. PRIOR WORK EXPERIENCE</label>
+              <select id="workex" name="workex" required>
+                <option value="Yes">Yes (Has Prior Experience)</option>
+                <option value="No" selected>No (Fresher Candidate)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="specialisation">09. POSTGRADUATE MBA SPECIALIZATION</label>
+              <select id="specialisation" name="specialisation" required>
+                <option value="Mkt&Fin">Marketing &amp; Finance</option>
+                <option value="Mkt&HR" selected>Marketing &amp; HR</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: Final Scores & Profile -->
+        <div class="wizard-step" id="wizardStep5">
+          <div class="form-section-title">STEP 5: EVALUATION METRICS &amp; PROFILE</div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="etest_p">10. EMPLOYABILITY TEST SCORE (E-TEST %) <span class="field-hint">0-100%</span></label>
+              <input type="number" id="etest_p" name="etest_p" min="0" max="100" step="0.1" placeholder="e.g. 55.0" required>
+              <div class="error-msg" id="err-etest_p">Must be a number between 0 and 100</div>
+            </div>
+
+            <div class="field">
+              <label for="mba_p">11. MBA DEGREE PERCENTAGE <span class="field-hint">0-100%</span></label>
+              <input type="number" id="mba_p" name="mba_p" min="0" max="100" step="0.1" placeholder="e.g. 58.8" required>
+              <div class="error-msg" id="err-mba_p">Must be a number between 0 and 100</div>
+            </div>
+
+            <div class="field full-width">
+              <label for="gender">12. CANDIDATE GENDER</label>
+              <select id="gender" name="gender" required>
+                <option value="M" selected>Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wizard Nav Actions -->
+        <div class="wizard-nav-actions">
+          <button type="button" class="btn-step-nav btn-prev" id="btnStepPrev" disabled style="visibility: hidden;">
+            &larr; BACK
+          </button>
+          <button type="button" class="btn-step-nav btn-next" id="btnStepNext">
+            NEXT &rarr;
+          </button>
+          <button type="submit" class="btn-submit" id="btnSubmit" style="display: none;">
             <div class="spinner" id="btnSpinner"></div>
             <span id="btnText">EVALUATE DOSSIER &amp; GENERATE REPORT</span>
           </button>
@@ -1182,6 +1319,25 @@
   const API_URL = "http://localhost:5000/predict";
 
   const SCORE_FIELDS = ["ssc_p", "hsc_p", "degree_p", "etest_p", "mba_p"];
+
+  const STEP_FIELDS = {
+    1: ["ssc_p"],
+    2: ["hsc_p"],
+    3: ["degree_p"],
+    4: [],
+    5: ["etest_p", "mba_p"]
+  };
+
+  const STEP_TITLES = {
+    1: "SECONDARY EDUCATION (10TH)",
+    2: "HIGHER SECONDARY (12TH)",
+    3: "UNDERGRADUATE DEGREE",
+    4: "SPECIALIZATION & EXPERIENCE",
+    5: "EVALUATION METRICS & PROFILE"
+  };
+
+  let currentStep = 1;
+  const TOTAL_STEPS = 5;
 
   const PRESETS = {
     high: {
@@ -1332,7 +1488,86 @@
     window.requestAnimationFrame(step);
   }
 
-  // Populate preset data into form
+  // Multi-step wizard navigation logic
+  function goToStep(stepNum) {
+    if (stepNum < 1 || stepNum > TOTAL_STEPS) return;
+
+    currentStep = stepNum;
+
+    // Update Step Elements Visibility
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const stepEl = document.getElementById(`wizardStep${i}`);
+      if (stepEl) {
+        stepEl.classList.toggle('active', i === currentStep);
+      }
+    }
+
+    // Update Progress Indicator
+    const stepNumberEl = document.getElementById('wizardStepNumber');
+    const stepTitleEl = document.getElementById('wizardStepTitle');
+    const progressBarEl = document.getElementById('wizardProgressBar');
+
+    if (stepNumberEl) stepNumberEl.innerText = `STEP ${currentStep} OF ${TOTAL_STEPS}`;
+    if (stepTitleEl) stepTitleEl.innerText = STEP_TITLES[currentStep] || '';
+    if (progressBarEl) progressBarEl.style.width = `${(currentStep / TOTAL_STEPS) * 100}%`;
+
+    // Update Navigation Buttons State
+    const btnPrev = document.getElementById('btnStepPrev');
+    const btnNext = document.getElementById('btnStepNext');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    if (btnPrev) {
+      btnPrev.disabled = currentStep === 1;
+      btnPrev.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+    }
+
+    if (currentStep === TOTAL_STEPS) {
+      if (btnNext) btnNext.style.display = 'none';
+      if (btnSubmit) btnSubmit.style.display = 'flex';
+    } else {
+      if (btnNext) btnNext.style.display = 'block';
+      if (btnSubmit) btnSubmit.style.display = 'none';
+    }
+  }
+
+  // Validate fields for a given step number
+  function validateStep(stepNum) {
+    let isValid = true;
+    hideAlert();
+
+    const fieldsToValidate = STEP_FIELDS[stepNum] || [];
+    fieldsToValidate.forEach(field => {
+      clearFieldError(field);
+      const el = document.getElementById(field);
+      if (!el) return;
+
+      const val = parseFloat(el.value);
+      if (isNaN(val) || el.value.trim() === '') {
+        setFieldError(field, 'Field is required');
+        isValid = false;
+      } else if (val < 0 || val > 100) {
+        setFieldError(field, 'Value must be between 0 and 100');
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  }
+
+  // Setup Step Nav Button Event Listeners
+  document.getElementById('btnStepNext')?.addEventListener('click', () => {
+    if (validateStep(currentStep)) {
+      goToStep(currentStep + 1);
+    } else {
+      showAlert('Validation Error', 'Please fix the highlighted inputs before proceeding to the next step.');
+    }
+  });
+
+  document.getElementById('btnStepPrev')?.addEventListener('click', () => {
+    goToStep(currentStep - 1);
+  });
+
+  // Populate preset data into form & jump to Step 5
   function loadPreset(key) {
     const data = PRESETS[key];
     if (!data) return;
@@ -1345,6 +1580,8 @@
       }
     });
     hideAlert();
+    // Jump directly to Step 5 for immediate review & submit
+    goToStep(TOTAL_STEPS);
   }
 
   // Clear specific field error visual
@@ -1393,25 +1630,16 @@
     }).format(val) + ' / yr';
   }
 
-  // Validate form inputs on client side
-  function validateForm() {
+  // Validate form inputs across all steps prior to final API call
+  function validateAllForm() {
     let isValid = true;
-    hideAlert();
-
-    SCORE_FIELDS.forEach(field => {
-      clearFieldError(field);
-      const el = document.getElementById(field);
-      const val = parseFloat(el.value);
-
-      if (isNaN(val) || el.value.trim() === '') {
-        setFieldError(field, 'Field is required');
+    for (let s = 1; s <= TOTAL_STEPS; s++) {
+      if (!validateStep(s)) {
         isValid = false;
-      } else if (val < 0 || val > 100) {
-        setFieldError(field, 'Value must be between 0 and 100');
-        isValid = false;
+        goToStep(s);
+        break;
       }
-    });
-
+    }
     return isValid;
   }
 
@@ -1419,7 +1647,7 @@
   document.getElementById('predictionForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!validateAllForm()) {
       showAlert('Validation Error', 'Please fix the highlighted numeric inputs before submitting.');
       return;
     }
@@ -1618,9 +1846,11 @@
     }
   }
 
-  // Pre-load moderate profile & trigger staggered reveal on page load
+  // Pre-load moderate profile & trigger initial wizard state on page load
   window.addEventListener('DOMContentLoaded', () => {
     loadPreset('moderate');
+    // Start at Step 1 for user interaction
+    goToStep(1);
 
     // Dynamic Reference Number based on today's date
     const todayStr = new Date().toISOString().slice(0,10).replace(/-/g,'');
