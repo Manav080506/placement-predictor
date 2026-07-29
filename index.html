@@ -996,6 +996,54 @@
       font-family: var(--font-mono);
     }
 
+    
+    /* Cohort Comparison Scatter Plot */
+    .cohort-container {
+      background: var(--panel-inset);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 16px;
+      margin-top: 18px;
+    }
+
+    .cohort-header {
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .cohort-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .cohort-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 220px;
+      width: 100%;
+    }
+
+    .cohort-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--line);
+      font-style: italic;
+    }
+
     /* Prefers Reduced Motion */
     @media (prefers-reduced-motion: reduce) {
       html {
@@ -1031,6 +1079,7 @@
       }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -1302,6 +1351,21 @@
           </p>
         </div>
 
+        
+        <!-- Section III Cohort Comparison Chart -->
+        <div class=cohort-container>
+          <div class=cohort-header>
+            <span class=cohort-title>WHERE YOU STAND IN THE COHORT</span>
+            <span class=cohort-subtitle>Your profile against 215 real student outcomes</span>
+          </div>
+          <div class=chart-wrapper>
+            <canvas id=cohortChart></canvas>
+          </div>
+          <div class=cohort-caption>
+            Your position on this chart, not the dot's color alone, is the story &mdash; many students above and below the placement line still got placed, academics are one factor among several.
+          </div>
+        </div>
+
         <!-- Explicit Honest Disclaimer -->
         <div class="report-disclaimer">
           Based on a 215-student cohort model, 87.9% cross-validated accuracy — a statistical estimate, not a guarantee.
@@ -1431,7 +1495,6 @@
   function getEndpointsToTry() {
     const candidateBases = [];
 
-    // 1. User-set custom URL (if provided)
     if (customApiUrl && customApiUrl.trim() !== '') {
       let clean = customApiUrl.trim().replace(/\/+$/, '');
       if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
@@ -1440,34 +1503,25 @@
       candidateBases.push(clean);
     }
 
-    // 2. localhost:5000
     candidateBases.push("http://localhost:5000");
-
-    // 3. localhost:5001
     candidateBases.push("http://localhost:5001");
-
-    // 4. localhost:8891
     candidateBases.push("http://localhost:8891");
 
-    // 5. Origin if served over HTTP
     if (window.location.protocol.startsWith('http')) {
       candidateBases.push(window.location.origin);
     }
 
-    // Deduplicate preserving order
     const uniqueBases = Array.from(new Set(candidateBases));
     return uniqueBases.map(b => `${b}/predict`);
   }
 
   const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Smooth scroll for hero try it button
   document.getElementById('btnTryIt')?.addEventListener('click', (e) => {
     e.preventDefault();
     document.getElementById('predictionForm')?.scrollIntoView({ behavior: isReducedMotion ? 'auto' : 'smooth' });
   });
 
-  // Animate numeric probability value over time
   function animateValue(element, start, end, duration) {
     if (isReducedMotion || duration <= 0) {
       element.innerText = `${end.toFixed(1)}%`;
@@ -1488,13 +1542,11 @@
     window.requestAnimationFrame(step);
   }
 
-  // Multi-step wizard navigation logic
   function goToStep(stepNum) {
     if (stepNum < 1 || stepNum > TOTAL_STEPS) return;
 
     currentStep = stepNum;
 
-    // Update Step Elements Visibility
     for (let i = 1; i <= TOTAL_STEPS; i++) {
       const stepEl = document.getElementById(`wizardStep${i}`);
       if (stepEl) {
@@ -1502,7 +1554,6 @@
       }
     }
 
-    // Update Progress Indicator
     const stepNumberEl = document.getElementById('wizardStepNumber');
     const stepTitleEl = document.getElementById('wizardStepTitle');
     const progressBarEl = document.getElementById('wizardProgressBar');
@@ -1511,7 +1562,6 @@
     if (stepTitleEl) stepTitleEl.innerText = STEP_TITLES[currentStep] || '';
     if (progressBarEl) progressBarEl.style.width = `${(currentStep / TOTAL_STEPS) * 100}%`;
 
-    // Update Navigation Buttons State
     const btnPrev = document.getElementById('btnStepPrev');
     const btnNext = document.getElementById('btnStepNext');
     const btnSubmit = document.getElementById('btnSubmit');
@@ -1530,7 +1580,6 @@
     }
   }
 
-  // Validate fields for a given step number
   function validateStep(stepNum) {
     let isValid = true;
     hideAlert();
@@ -1554,7 +1603,6 @@
     return isValid;
   }
 
-  // Setup Step Nav Button Event Listeners
   document.getElementById('btnStepNext')?.addEventListener('click', () => {
     if (validateStep(currentStep)) {
       goToStep(currentStep + 1);
@@ -1567,7 +1615,6 @@
     goToStep(currentStep - 1);
   });
 
-  // Populate preset data into form & jump to Step 5
   function loadPreset(key) {
     const data = PRESETS[key];
     if (!data) return;
@@ -1580,11 +1627,9 @@
       }
     });
     hideAlert();
-    // Jump directly to Step 5 for immediate review & submit
     goToStep(TOTAL_STEPS);
   }
 
-  // Clear specific field error visual
   function clearFieldError(fieldId) {
     const el = document.getElementById(fieldId);
     const errEl = document.getElementById(`err-${fieldId}`);
@@ -1592,7 +1637,6 @@
     if (errEl) errEl.classList.remove('visible');
   }
 
-  // Set field error visual
   function setFieldError(fieldId, msg) {
     const el = document.getElementById(fieldId);
     const errEl = document.getElementById(`err-${fieldId}`);
@@ -1603,13 +1647,11 @@
     }
   }
 
-  // Hide global alert banner
   function hideAlert() {
     const alertBox = document.getElementById('alertBox');
     alertBox.classList.remove('visible');
   }
 
-  // Show global alert banner
   function showAlert(title, message) {
     const alertBox = document.getElementById('alertBox');
     const alertTitle = document.getElementById('alertTitle');
@@ -1620,7 +1662,6 @@
     alertBox.classList.add('visible');
   }
 
-  // Format currency helper
   function formatINR(val) {
     if (val === null || val === undefined) return 'N/A';
     return new Intl.NumberFormat('en-IN', {
@@ -1630,7 +1671,6 @@
     }).format(val) + ' / yr';
   }
 
-  // Validate form inputs across all steps prior to final API call
   function validateAllForm() {
     let isValid = true;
     for (let s = 1; s <= TOTAL_STEPS; s++) {
@@ -1643,7 +1683,130 @@
     return isValid;
   }
 
-  // Form submission handler
+  // 215 Student Cohort Dataset Embedded
+  const COHORT_RAW_DATA = [{"x": 68.7, "y": 28, "status": "Placed"}, {"x": 75.35, "y": 65, "status": "Placed"}, {"x": 63.7, "y": 31, "status": "Placed"}, {"x": 54.86, "y": 68, "status": "Not Placed"}, {"x": 72.05, "y": 34, "status": "Placed"}, {"x": 55.91, "y": 71, "status": "Not Placed"}, {"x": 56.87, "y": 37, "status": "Not Placed"}, {"x": 68.53, "y": 74, "status": "Placed"}, {"x": 71.32, "y": 40, "status": "Placed"}, {"x": 60.3, "y": 77, "status": "Not Placed"}, {"x": 59.96, "y": 43, "status": "Placed"}, {"x": 70.0, "y": 80, "status": "Placed"}, {"x": 58.01, "y": 46, "status": "Not Placed"}, {"x": 72.91, "y": 83, "status": "Placed"}, {"x": 53.49, "y": 49, "status": "Not Placed"}, {"x": 68.41, "y": 15, "status": "Placed"}, {"x": 64.33, "y": 52, "status": "Placed"}, {"x": 63.32, "y": 18, "status": "Not Placed"}, {"x": 64.27, "y": 55, "status": "Not Placed"}, {"x": 68.72, "y": 21, "status": "Placed"}, {"x": 62.42, "y": 58, "status": "Placed"}, {"x": 77.27, "y": 24, "status": "Placed"}, {"x": 67.91, "y": 61, "status": "Placed"}, {"x": 66.44, "y": 27, "status": "Placed"}, {"x": 81.77, "y": 64, "status": "Placed"}, {"x": 55.68, "y": 30, "status": "Not Placed"}, {"x": 68.39, "y": 67, "status": "Placed"}, {"x": 63.42, "y": 33, "status": "Placed"}, {"x": 71.23, "y": 70, "status": "Placed"}, {"x": 59.57, "y": 36, "status": "Not Placed"}, {"x": 66.8, "y": 73, "status": "Placed"}, {"x": 60.83, "y": 39, "status": "Not Placed"}, {"x": 67.65, "y": 76, "status": "Placed"}, {"x": 76.44, "y": 42, "status": "Placed"}, {"x": 56.94, "y": 79, "status": "Not Placed"}, {"x": 70.44, "y": 45, "status": "Placed"}, {"x": 50.86, "y": 82, "status": "Not Placed"}, {"x": 69.02, "y": 48, "status": "Placed"}, {"x": 63.47, "y": 85, "status": "Placed"}, {"x": 68.89, "y": 51, "status": "Placed"}, {"x": 75.43, "y": 17, "status": "Placed"}, {"x": 67.98, "y": 54, "status": "Not Placed"}, {"x": 51.05, "y": 20, "status": "Not Placed"}, {"x": 76.22, "y": 57, "status": "Placed"}, {"x": 75.17, "y": 23, "status": "Placed"}, {"x": 69.63, "y": 60, "status": "Not Placed"}, {"x": 70.03, "y": 26, "status": "Not Placed"}, {"x": 58.64, "y": 63, "status": "Placed"}, {"x": 63.87, "y": 29, "status": "Placed"}, {"x": 48.78, "y": 66, "status": "Not Placed"}, {"x": 69.95, "y": 32, "status": "Placed"}, {"x": 58.59, "y": 69, "status": "Not Placed"}, {"x": 51.3, "y": 35, "status": "Not Placed"}, {"x": 73.26, "y": 72, "status": "Placed"}, {"x": 67.14, "y": 38, "status": "Placed"}, {"x": 61.18, "y": 75, "status": "Placed"}, {"x": 65.67, "y": 41, "status": "Placed"}, {"x": 70.4, "y": 78, "status": "Placed"}, {"x": 65.5, "y": 44, "status": "Placed"}, {"x": 61.74, "y": 81, "status": "Placed"}, {"x": 68.31, "y": 47, "status": "Placed"}, {"x": 71.74, "y": 84, "status": "Placed"}, {"x": 69.45, "y": 50, "status": "Placed"}, {"x": 63.62, "y": 16, "status": "Not Placed"}, {"x": 71.69, "y": 53, "status": "Placed"}, {"x": 53.77, "y": 19, "status": "Not Placed"}, {"x": 70.36, "y": 56, "status": "Placed"}, {"x": 71.85, "y": 22, "status": "Placed"}, {"x": 62.16, "y": 59, "status": "Not Placed"}, {"x": 70.02, "y": 25, "status": "Placed"}, {"x": 67.61, "y": 62, "status": "Placed"}, {"x": 70.81, "y": 28, "status": "Placed"}, {"x": 74.6, "y": 65, "status": "Placed"}, {"x": 69.97, "y": 31, "status": "Placed"}, {"x": 64.7, "y": 68, "status": "Placed"}, {"x": 66.38, "y": 34, "status": "Not Placed"}, {"x": 68.28, "y": 71, "status": "Placed"}, {"x": 66.66, "y": 37, "status": "Placed"}, {"x": 74.7, "y": 74, "status": "Placed"}, {"x": 66.25, "y": 40, "status": "Not Placed"}, {"x": 65.59, "y": 77, "status": "Placed"}, {"x": 70.47, "y": 43, "status": "Placed"}, {"x": 66.11, "y": 80, "status": "Not Placed"}, {"x": 74.42, "y": 46, "status": "Placed"}, {"x": 66.25, "y": 83, "status": "Placed"}, {"x": 81.76, "y": 49, "status": "Placed"}, {"x": 61.51, "y": 15, "status": "Placed"}, {"x": 57.42, "y": 52, "status": "Not Placed"}, {"x": 66.34, "y": 18, "status": "Placed"}, {"x": 72.59, "y": 55, "status": "Placed"}, {"x": 81.26, "y": 21, "status": "Placed"}, {"x": 55.65, "y": 58, "status": "Not Placed"}, {"x": 63.67, "y": 24, "status": "Placed"}, {"x": 55.85, "y": 61, "status": "Not Placed"}, {"x": 59.74, "y": 27, "status": "Placed"}, {"x": 69.54, "y": 64, "status": "Placed"}, {"x": 71.61, "y": 30, "status": "Placed"}, {"x": 65.76, "y": 67, "status": "Not Placed"}, {"x": 66.08, "y": 33, "status": "Placed"}, {"x": 64.62, "y": 70, "status": "Not Placed"}, {"x": 56.24, "y": 36, "status": "Not Placed"}, {"x": 65.86, "y": 73, "status": "Placed"}, {"x": 66.83, "y": 39, "status": "Placed"}, {"x": 72.46, "y": 76, "status": "Placed"}, {"x": 63.81, "y": 42, "status": "Placed"}, {"x": 59.08, "y": 79, "status": "Not Placed"}, {"x": 57.69, "y": 45, "status": "Not Placed"}, {"x": 82.13, "y": 82, "status": "Placed"}, {"x": 67.58, "y": 48, "status": "Placed"}, {"x": 59.02, "y": 85, "status": "Not Placed"}, {"x": 66.58, "y": 51, "status": "Placed"}, {"x": 56.66, "y": 17, "status": "Not Placed"}, {"x": 58.48, "y": 54, "status": "Placed"}, {"x": 70.76, "y": 20, "status": "Placed"}, {"x": 64.25, "y": 57, "status": "Placed"}, {"x": 65.62, "y": 23, "status": "Placed"}, {"x": 69.61, "y": 60, "status": "Placed"}, {"x": 73.01, "y": 26, "status": "Placed"}, {"x": 76.12, "y": 63, "status": "Placed"}, {"x": 64.53, "y": 29, "status": "Placed"}, {"x": 53.95, "y": 66, "status": "Not Placed"}, {"x": 68.02, "y": 32, "status": "Placed"}, {"x": 68.4, "y": 69, "status": "Placed"}, {"x": 65.67, "y": 35, "status": "Placed"}, {"x": 65.9, "y": 72, "status": "Placed"}, {"x": 75.83, "y": 38, "status": "Placed"}, {"x": 70.92, "y": 75, "status": "Placed"}, {"x": 64.85, "y": 41, "status": "Placed"}, {"x": 76.95, "y": 78, "status": "Placed"}, {"x": 75.24, "y": 44, "status": "Placed"}, {"x": 62.79, "y": 81, "status": "Not Placed"}, {"x": 63.67, "y": 47, "status": "Placed"}, {"x": 63.12, "y": 84, "status": "Placed"}, {"x": 68.75, "y": 50, "status": "Placed"}, {"x": 77.14, "y": 16, "status": "Placed"}, {"x": 65.66, "y": 53, "status": "Placed"}, {"x": 57.89, "y": 19, "status": "Not Placed"}, {"x": 65.6, "y": 56, "status": "Placed"}, {"x": 72.69, "y": 22, "status": "Placed"}, {"x": 65.11, "y": 59, "status": "Placed"}, {"x": 64.06, "y": 25, "status": "Placed"}, {"x": 62.98, "y": 62, "status": "Not Placed"}, {"x": 69.93, "y": 28, "status": "Placed"}, {"x": 68.41, "y": 65, "status": "Placed"}, {"x": 55.38, "y": 31, "status": "Not Placed"}, {"x": 72.39, "y": 68, "status": "Placed"}, {"x": 61.53, "y": 34, "status": "Placed"}, {"x": 67.82, "y": 71, "status": "Placed"}, {"x": 70.77, "y": 37, "status": "Placed"}, {"x": 53.88, "y": 74, "status": "Not Placed"}, {"x": 62.24, "y": 40, "status": "Placed"}, {"x": 65.97, "y": 77, "status": "Placed"}, {"x": 71.29, "y": 43, "status": "Placed"}, {"x": 58.87, "y": 80, "status": "Placed"}, {"x": 57.3, "y": 46, "status": "Placed"}, {"x": 63.03, "y": 83, "status": "Not Placed"}, {"x": 67.83, "y": 49, "status": "Placed"}, {"x": 61.23, "y": 15, "status": "Placed"}, {"x": 63.97, "y": 52, "status": "Not Placed"}, {"x": 54.9, "y": 18, "status": "Not Placed"}, {"x": 74.57, "y": 55, "status": "Placed"}, {"x": 56.7, "y": 21, "status": "Not Placed"}, {"x": 76.28, "y": 58, "status": "Placed"}, {"x": 65.11, "y": 24, "status": "Placed"}, {"x": 67.13, "y": 61, "status": "Placed"}, {"x": 72.55, "y": 27, "status": "Not Placed"}, {"x": 59.09, "y": 64, "status": "Placed"}, {"x": 68.15, "y": 30, "status": "Not Placed"}, {"x": 53.95, "y": 67, "status": "Not Placed"}, {"x": 57.22, "y": 33, "status": "Not Placed"}, {"x": 64.97, "y": 70, "status": "Not Placed"}, {"x": 74.51, "y": 36, "status": "Placed"}, {"x": 59.91, "y": 73, "status": "Placed"}, {"x": 54.58, "y": 39, "status": "Not Placed"}, {"x": 63.64, "y": 76, "status": "Placed"}, {"x": 62.67, "y": 42, "status": "Not Placed"}, {"x": 58.23, "y": 79, "status": "Placed"}, {"x": 79.95, "y": 45, "status": "Placed"}, {"x": 65.02, "y": 82, "status": "Placed"}, {"x": 69.53, "y": 48, "status": "Not Placed"}, {"x": 63.98, "y": 85, "status": "Placed"}, {"x": 61.64, "y": 51, "status": "Not Placed"}, {"x": 58.45, "y": 17, "status": "Not Placed"}, {"x": 68.2, "y": 54, "status": "Placed"}, {"x": 59.05, "y": 20, "status": "Not Placed"}, {"x": 77.36, "y": 57, "status": "Placed"}, {"x": 59.98, "y": 23, "status": "Not Placed"}, {"x": 68.97, "y": 60, "status": "Placed"}, {"x": 54.83, "y": 26, "status": "Not Placed"}, {"x": 66.94, "y": 63, "status": "Not Placed"}, {"x": 64.42, "y": 29, "status": "Not Placed"}, {"x": 65.25, "y": 66, "status": "Placed"}, {"x": 62.18, "y": 32, "status": "Placed"}, {"x": 58.91, "y": 69, "status": "Placed"}, {"x": 57.01, "y": 35, "status": "Not Placed"}, {"x": 68.24, "y": 72, "status": "Placed"}, {"x": 66.75, "y": 38, "status": "Placed"}, {"x": 74.42, "y": 75, "status": "Placed"}, {"x": 68.49, "y": 41, "status": "Not Placed"}, {"x": 61.7, "y": 78, "status": "Placed"}, {"x": 61.7, "y": 44, "status": "Placed"}, {"x": 58.41, "y": 81, "status": "Not Placed"}, {"x": 64.78, "y": 47, "status": "Placed"}, {"x": 58.05, "y": 84, "status": "Placed"}, {"x": 71.92, "y": 50, "status": "Placed"}, {"x": 61.2, "y": 16, "status": "Placed"}, {"x": 49.1, "y": 53, "status": "Not Placed"}, {"x": 73.47, "y": 19, "status": "Placed"}, {"x": 57.73, "y": 56, "status": "Not Placed"}, {"x": 63.87, "y": 22, "status": "Placed"}, {"x": 78.67, "y": 59, "status": "Placed"}, {"x": 60.91, "y": 25, "status": "Placed"}, {"x": 69.18, "y": 62, "status": "Placed"}, {"x": 64.56, "y": 28, "status": "Placed"}, {"x": 58.3, "y": 65, "status": "Not Placed"}];
+
+  const placedCohortData = COHORT_RAW_DATA.filter(d => d.status === 'Placed');
+  const unplacedCohortData = COHORT_RAW_DATA.filter(d => d.status === 'Not Placed');
+
+  let cohortChartInstance = null;
+
+  function initOrUpdateCohortChart(candidateAvg, candidateStatus) {
+    const canvas = document.getElementById('cohortChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    const candidatePoint = {
+      x: candidateAvg,
+      y: 50
+    };
+
+    if (cohortChartInstance) {
+      cohortChartInstance.data.datasets[2].data = [candidatePoint];
+      cohortChartInstance.update(isReducedMotion ? 'none' : 'default');
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    cohortChartInstance = new Chart(ctx, {
+      type: 'scatter',
+      data: {
+        datasets: [
+          {
+            label: 'Placed Students (148)',
+            data: placedCohortData,
+            backgroundColor: 'rgba(46, 125, 50, 0.45)',
+            borderColor: 'rgba(30, 86, 49, 0.75)',
+            borderWidth: 1,
+            pointRadius: 4.5,
+            pointHoverRadius: 7
+          },
+          {
+            label: 'Not Placed Students (67)',
+            data: unplacedCohortData,
+            backgroundColor: 'rgba(158, 42, 43, 0.4)',
+            borderColor: 'rgba(158, 42, 43, 0.75)',
+            borderWidth: 1,
+            pointRadius: 4.5,
+            pointHoverRadius: 7
+          },
+          {
+            label: 'Your Candidate Dossier',
+            data: [candidatePoint],
+            backgroundColor: '#A37A2C',
+            borderColor: '#1B2A4A',
+            borderWidth: 3,
+            pointRadius: 10,
+            pointHoverRadius: 13,
+            pointStyle: 'rectRot'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: isReducedMotion ? false : { duration: 600, easing: 'easeOutQuart' },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              font: { family: 'IBM Plex Mono', size: 10, weight: '600' },
+              color: '#1C2024',
+              boxWidth: 10,
+              padding: 10,
+              usePointStyle: true
+            }
+          },
+          tooltip: {
+            backgroundColor: '#1B2A4A',
+            titleFont: { family: 'IBM Plex Mono', size: 11, weight: 'bold' },
+            bodyFont: { family: 'IBM Plex Sans', size: 11 },
+            padding: 10,
+            cornerRadius: 4,
+            callbacks: {
+              label: function(context) {
+                const datasetLabel = context.dataset.label || '';
+                const xVal = context.parsed.x ? context.parsed.x.toFixed(1) : '';
+                if (datasetLabel.includes('Your Candidate')) {
+                  return `★ YOUR DOSSIER: ${xVal}% Academic Avg`;
+                }
+                return `${datasetLabel}: Avg ${xVal}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom',
+            min: 40,
+            max: 92,
+            title: {
+              display: true,
+              text: 'Academic Average Score % (10th, 12th, Degree, MBA)',
+              font: { family: 'IBM Plex Mono', size: 10, weight: '600' },
+              color: '#1B2A4A',
+              padding: { top: 6 }
+            },
+            grid: {
+              color: 'rgba(213, 206, 190, 0.6)'
+            },
+            ticks: {
+              font: { family: 'IBM Plex Mono', size: 9 },
+              color: '#5C6470',
+              stepSize: 10
+            }
+          },
+          y: {
+            display: false,
+            min: 0,
+            max: 100
+          }
+        }
+      }
+    });
+  }
+
   document.getElementById('predictionForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -1667,7 +1830,6 @@
       mba_p: parseFloat(document.getElementById('mba_p').value)
     };
 
-    // UI Loading state
     const btnSubmit = document.getElementById('btnSubmit');
     const btnSpinner = document.getElementById('btnSpinner');
     const btnText = document.getElementById('btnText');
@@ -1681,12 +1843,10 @@
     btnText.innerText = 'EVALUATING DOSSIER...';
     hideAlert();
 
-    // Show Skeleton Loader (hide empty state & previous results)
     emptyState.style.display = 'none';
     resultsContainer.classList.remove('visible', 'animate-in');
     skeletonLoader.classList.add('visible');
 
-    // Ensure minimum 600ms skeleton display time to avoid instant flash
     const minDelay = new Promise(resolve => setTimeout(resolve, isReducedMotion ? 50 : 600));
 
     const endpoints = getEndpointsToTry();
@@ -1715,7 +1875,6 @@
       }
     })();
 
-    // Wait for both fetch and min 600ms skeleton timer
     await Promise.all([fetchTask, minDelay]);
 
     skeletonLoader.classList.remove('visible');
@@ -1756,7 +1915,6 @@
         return;
       }
 
-      // Success - Render Results with animation
       renderResults(data, payload);
 
     } catch (err) {
@@ -1770,7 +1928,6 @@
     }
   });
 
-  // Render prediction results to UI
   function renderResults(data, payload) {
     const emptyState = document.getElementById('emptyState');
     const resultsContainer = document.getElementById('resultsContainer');
@@ -1784,15 +1941,13 @@
 
     emptyState.style.display = 'none';
 
-    // Trigger fade + slide animation
     resultsContainer.classList.remove('visible', 'animate-in');
-    void resultsContainer.offsetWidth; // force reflow
+    void resultsContainer.offsetWidth;
     resultsContainer.classList.add('visible', 'animate-in');
 
     const isPlaced = data.prediction === 'Placed';
     const probNum = data.placement_probability * 100;
 
-    // Update Status Badge (Honest Projected status)
     if (isPlaced) {
       statusBadge.className = 'status-badge placed';
       badgeIcon.innerText = '●';
@@ -1803,20 +1958,16 @@
       badgeText.innerText = 'STATUS: PROJECTED (UNPLACED)';
     }
 
-    // Gauge Colors
     gaugeValue.className = `gauge-value ${isPlaced ? 'placed-color' : 'unplaced-color'}`;
     progressFill.className = `progress-fill ${isPlaced ? 'placed-color' : 'unplaced-color'}`;
 
-    // Animate Number Count Up
     animateValue(gaugeValue, 0, probNum, isReducedMotion ? 0 : 600);
 
-    // Progress Fill Animation
     progressFill.style.width = '0%';
     setTimeout(() => {
       progressFill.style.width = `${probNum.toFixed(1)}%`;
     }, 50);
 
-    // Update Salary Amount
     if (isPlaced && data.predicted_salary) {
       salaryAmount.className = 'salary-amount';
       salaryAmount.innerText = formatINR(data.predicted_salary);
@@ -1825,16 +1976,17 @@
       salaryAmount.innerText = 'N/A (Salary model applies to placed candidates)';
     }
 
-    // Payoff overshoot animation on key metric elements
     [gaugeValue, salaryAmount].forEach(el => {
       el.classList.remove('payoff-overshoot');
-      void el.offsetWidth; // force reflow
+      void el.offsetWidth;
       if (!isReducedMotion) {
         el.classList.add('payoff-overshoot');
       }
     });
 
-    // Dynamic insight line based on profile details
+    const candAvg = (payload.ssc_p + payload.hsc_p + payload.degree_p + payload.mba_p) / 4;
+    initOrUpdateCohortChart(candAvg, data.prediction);
+
     if (payload.workex === 'No') {
       insightText.innerText = 'Work experience alone can shift placement odds by ~27 points for similar profiles.';
     } else if (payload.specialisation === 'Mkt&HR') {
@@ -1846,13 +1998,10 @@
     }
   }
 
-  // Pre-load moderate profile & trigger initial wizard state on page load
   window.addEventListener('DOMContentLoaded', () => {
     loadPreset('moderate');
-    // Start at Step 1 for user interaction
     goToStep(1);
 
-    // Dynamic Reference Number based on today's date
     const todayStr = new Date().toISOString().slice(0,10).replace(/-/g,'');
     const docRefNumEl = document.getElementById('docRefNum');
     if (docRefNumEl) {
@@ -1867,7 +2016,6 @@
         }, idx * 90);
       });
 
-      // Subtle IntersectionObserver for scroll-triggered reveal
       if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
